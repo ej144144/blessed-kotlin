@@ -6,7 +6,9 @@ import android.bluetooth.BluetoothGattCharacteristic
 import android.bluetooth.le.ScanResult
 import android.content.Context
 import android.os.Handler
+import android.os.HandlerThread
 import android.os.Looper
+import android.os.Process
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import com.welie.blessed.*
@@ -28,8 +30,14 @@ import java.util.*
 object BluetoothHandler {
 
     private lateinit var context: Context
+
+    // Setup our own thread for BLE.
+    // Use Handler(Looper.getMainLooper()) if you want to run on main thread
+    private val handlerThread = HandlerThread("Blessed", Process.THREAD_PRIORITY_DEFAULT)
+    private lateinit var handler : Handler
+
     lateinit var centralManager: BluetoothCentralManager
-    private val handler = Handler(Looper.getMainLooper())
+
     private val measurementFlow_ = MutableStateFlow("Waiting for measurement")
     val measurementFlow = measurementFlow_.asStateFlow()
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -271,6 +279,11 @@ object BluetoothHandler {
     fun initialize(context: Context) {
         Timber.plant(Timber.DebugTree())
         Timber.i("initializing BluetoothHandler")
+
+        // Start the thread and create our private Handler
+        handlerThread.start()
+        handler = Handler(handlerThread.looper)
+
         this.context = context.applicationContext
         this.centralManager = BluetoothCentralManager(this.context, bluetoothCentralManagerCallback, handler)
     }
