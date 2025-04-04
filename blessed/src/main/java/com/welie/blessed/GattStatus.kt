@@ -237,6 +237,11 @@ enum class GattStatus(val value: Int) {
     CANCEL(0x92),  // (0xE0 – 0xFF) - Common profile and service error codes defined in Core Specification Supplement, Part B.
 
     /**
+     * GATT connection timed out, likely due to the remote device being out of range or not advertising as connectable.
+     */
+    CONNECTION_TIMEOUT(0x93),
+
+    /**
      * Client Characteristic Configuration Descriptor error
      */
     CCCD_CFG_ERROR(0x00FD),
