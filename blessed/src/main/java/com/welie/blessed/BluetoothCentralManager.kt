@@ -248,6 +248,7 @@ class BluetoothCentralManager(private val context: Context, private val bluetoot
             .setMatchMode(ScanSettings.MATCH_MODE_AGGRESSIVE)
             .setNumOfMatches(ScanSettings.MATCH_NUM_ONE_ADVERTISEMENT)
             .setReportDelay(0L)
+            .setLegacy(false)
             .build()
     }
 
